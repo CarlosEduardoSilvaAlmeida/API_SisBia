@@ -1,18 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Consulta API</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Dados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .dropdown {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultados {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Consulta API</h1>
-    <form action="/search" method="get">
-        <label for="estado">Estado:</label>
-        <input type="text" id="estado" name="estado"><br><br>
-        <label for="grupo">Grupo de Biodiversidade:</label>
-        <input type="text" id="grupo" name="grupo"><br><br>
-        <label for="classe">Classe:</label>
-        <input type="text" id="classe" name="classe"><br><br>
-        <input type="submit" value="Buscar">
-    </form>
+    <div class="container">
+        <h1>Busca de Dados</h1>
+        <form id="searchForm">
+            <div class="dropdown">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado">
+                    <option value="">Selecione um estado</option>
+                </select>
+            </div>
+            <div class="dropdown">
+                <label for="grupo">Grupo:</label>
+                <select id="grupo" name="grupo">
+                    <option value="">Selecione um grupo</option>
+                </select>
+            </div>
+            <div class="dropdown">
+                <label for="classe">Classe:</label>
+                <select id="classe" name="classe">
+                    <option value="">Selecione uma classe</option>
+                </select>
+            </div>
+            <button type="submit">Buscar</button>
+        </form>
+
+        <div id="resultados"></div>
+    </div>
+
+    <script>
+        // Função para preencher os selects com os dados recebidos
+        function preencherSelects(data) {
+            const estadoSelect = document.getElementById('estado');
+            const grupoSelect = document.getElementById('grupo');
+            const classeSelect = document.getElementById('classe');
+
+            data.estados.forEach(estado => {
+                const option = document.createElement('option');
+                option.value = estado;
+                option.textContent = estado;
+                estadoSelect.appendChild(option);
+            });
+
+            data.grupos.forEach(grupo => {
+                const option = document.createElement('option');
+                option.value = grupo;
+                option.textContent = grupo;
+                grupoSelect.appendChild(option);
+            });
+
+            data.classes.forEach(classe => {
+                const option = document.createElement('option');
+                option.value = classe;
+                option.textContent = classe;
+                classeSelect.appendChild(option);
+            });
+        }
+
+        // Requisição para obter os dados dos selects
+        fetch('/options')
+            .then(response => response.json())
+            .then(data => preencherSelects(data));
+
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const params = new URLSearchParams(formData);
+
+            fetch('/search?' + params.toString())
+                .then(response => response.json())
+                .then(data => {
+                    const resultadosDiv = document.getElementById('resultados');
+                    resultadosDiv.innerHTML = '';
+
+                    if (data.length > 0) {
+                        const table = document.createElement('table');
+                        const thead = document.createElement('thead');
+                        const tbody = document.createElement('tbody');
+
+                        // Cabeçalho da tabela
+                        const headerRow = document.createElement('tr');
+                        Object.keys(data[0]).forEach(key => {
+                            const th = document.createElement('th');
+                            th.textContent = key;
+                            headerRow.appendChild(th);
+                        });
+                        thead.appendChild(headerRow);
+
+                        // Linhas da tabela (limitar a 20 linhas)
+                        data.slice(0, 20).forEach(item => {
+                            const row = document.createElement('tr');
+                            Object.values(item).forEach(value => {
+                                const td = document.createElement('td');
+                                td.textContent = value;
+                                row.appendChild(td);
+                            });
+                            tbody.appendChild(row);
+                        });
+
+                        table.appendChild(thead);
+                        table.appendChild(tbody);
+                        resultadosDiv.appendChild(table);
+                    } else {
+                        resultadosDiv.textContent = 'Nenhum resultado encontrado.';
+                    }
+                });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,11 @@
+import json
+
+# Supondo que você tenha uma variável `resultado_json` que contém a string JSON
+resultado_json = "[{\"ua_ponto_central_ocorrencia_longitude\":-50.2478115854,\"ua_ponto_central_ocorrencia_latitude\":-6.4819097786,\"sintax_ordem\":\"Arecales\",\"sintax_familia\":\"Arecaceae\",\"sintax_genero\":\"Euterpe\",\"bio_taxon_incerteza\":null,\"sintax_especie\":\"Euterpe precatoria\",\"bio_data\":null},{\"ua_ponto_central_ocorrencia_longitude\":-50.2478115854,\"ua_ponto_central_ocorrencia_latitude\":-6.4819097786,\"sintax_ordem\":\"Arecales\",\"sintax_familia\":\"Arecaceae\",\"sintax_genero\":\"Euterpe\",\"bio_taxon_incerteza\":null,\"sintax_especie\":\"Euterpe precatoria\",\"bio_data\":null},{\"ua_ponto_central_ocorrencia_longitude\":-50.2478115854,\"ua_ponto_central_ocorrencia_latitude\":-6.4819097786,\"sintax_ordem\":\"Myrtales\",\"sintax_familia\":\"Combretaceae\",\"sintax_genero\":\"Buchenavia\",\"bio_taxon_incerteza\":null,\"sintax_especie\":\"Buchenavia tomentosa\",\"bio_data\":null},{\"ua_ponto_central_ocorrencia_longitude\":-50.2478115854,\"ua_ponto_central_ocorrencia_latitude\":-6.4819097786,\"sintax_ordem\":\"Myrtales\",\"sintax_familia\":\"Combretaceae\",\"sintax_genero\":\"Buchenavia\",\"bio_taxon_incerteza\":null,\"sintax_especie\":\"Buchenavia tomentosa\",\"bio_data\":null},{\"ua_ponto_central_ocorrencia_longitude\":-50.2478115854,\"ua_ponto_central_ocorrencia_latitude\":-6.4819097786,\"sintax_ordem\":\"Myrtales\",\"sintax_familia\":\"Combretaceae\",\"sintax_genero\":\"Buchenavia\",\"bio_taxon_incerteza\":null,\"sintax_especie\":\"Buchenavia tomentosa\",\"bio_data\":null},{\"ua_ponto_central_ocorrencia_longitude\":-50.2478115854,\"ua_ponto_central_ocorrencia_latitude\":-6.4819097786,\"sintax_ordem\":\"Scrophulariales\",\"sintax_familia\":\"Bignoniaceae\",\"sintax_genero\":\"Jacaranda\"]"
+
+# Carregar a string JSON como uma lista de objetos
+data = json.loads(resultado_json)
+
+# Salvar o JSON formatado
+with open('resultado_formatado.json', 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=4, ensure_ascii=False)
